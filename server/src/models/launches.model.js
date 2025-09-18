@@ -36,7 +36,22 @@ function addNewLaunch(launch) {
   )
 }
 
+// CHeck exist launch
+function existLaunchWithId(launchId) {
+  return launches.has(launchId)
+}
+
+//Do not delete launch, just change status
+function abortedLaunchById(launchId) {
+  const aborted = launches.get(launchId)
+  aborted.upcoming = false
+  aborted.success = false
+  return aborted
+}
+
 module.exports = {
   getAllLaunches,
   addNewLaunch,
+  existLaunchWithId,
+  abortedLaunchById,
 }
