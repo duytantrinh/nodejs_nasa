@@ -43,11 +43,11 @@ app.use(express.json())
 app.use(express.static(path.join(__dirname, "..", "public")))
 
 // middlware to use router /planets
-app.use(planetsRouter)
-app.use(launchesRouter)
+app.use("/planets", planetsRouter)
+app.use("/launches", launchesRouter)
 
-// middleware to run http://localhost:8000/
-app.get("/", (req, res) => {
+// middleware to run http://localhost:8000/{*splat} === every endpoint after 8000/
+app.get("/{*splat}", (req, res) => {
   res.sendFile(path.join(__dirname, "..", "public", "index.html"))
 })
 

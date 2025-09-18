@@ -1,5 +1,7 @@
 https://github.com/jovi-tsx/nasa-project
 
+`npm run deploy`
+
 - using MVC pattern: models,routes in BackEnd, views in FrontEnd
 
 # FrontEnd: client
@@ -37,10 +39,18 @@ https:// google.com:3000
 
 > > run frontend và BAckend trên cùng 1 url
 
-1. tai client : npm run build ==> tạo đc folder "build"
-2. tại server: tạo folder public ( same level với src) , copy tất cả files/folders con của folder "build" vừa tạo ngoài client vào folder public này
+1. tai client : file package.json
 
-3. tại app.js của server: viết middleware để chạy folder public này
+```bash
+ "scripts": {
+    "start": "react-scripts start",
+    "build": "set BUILD_PATH=../server/public&& react-scripts build",
+    "test": "react-scripts test --passWithNoTests",
+    "eject": "react-scripts eject"
+  },
+```
+
+2. tại app.js của server: viết middleware để chạy folder public này
 
 ```bash
 # // middle ware to run static files at public folder
@@ -48,18 +58,23 @@ app.use(express.static(path.join(__dirname, "..", "public")))
 
 # // middleware to run http://localhost:8000/
 # khi bấm url trên , program tự tìm đến và run file public/index.html
-app.get("/", (req, res) => {
+# middleware to run http://localhost:8000/{*splat} === every endpoint after 8000/
+app.get("/{*splat}", (req, res) => {
   res.sendFile(path.join(__dirname, "..", "public", "index.html"))
 })
 
+
 ```
 
-4. tại file package.json của root folder `thêm tât cả các script vào`
+3. tại file package.json của root folder `thêm tât cả các script vào`
 
-5. tại root folder chạy `npm run deploy`
+4. tại root folder chạy `npm run deploy`
+   ==> tại server sẽ tự động tạo thêm folder public do dòng lệnh  
+   `"build": "set BUILD_PATH=../server/public&& react-scripts build",` đc tạo tại package.json client
+
    ==> `vừa run server và client at the same time`
 
-6. từ bay giờ: url cảu UI `http://localhost:8000/`
+5. từ bay giờ: url cảu UI `http://localhost:8000/`
 
 # Install MiddleWare morgan for server
 
@@ -68,7 +83,7 @@ app.get("/", (req, res) => {
 
 # Flow data (E.g: planets)
 
-`app.js --> planets.router --> planets.controller --> planets.model`
+`server.js --> app.js --> planets.router --> planets.controller --> planets.model`
 
 1. planets.model: tạo/kết nối với database planets
 
@@ -90,4 +105,4 @@ app.use(planetsRouter)
 
 ```
 
-// 20 GET launches
+// 27 DELETE
