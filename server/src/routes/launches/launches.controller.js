@@ -41,10 +41,6 @@ function httpPostNewLaunch(req, res) {
 function httpDeleteLaunch(req, res) {
   const launchId = Number(req.params.id)
 
-  console.log(launchId)
-
-  console.log(existLaunchWithId(launchId))
-
   // if launch DOESNOT exist
   if (!existLaunchWithId(launchId)) {
     return res.status(404).json({

@@ -12,14 +12,14 @@ server -> server.js
 --------> models
 --------> routes
 
-# ======= set CORS cho FrontEnd và BackEnd
+# 1. ======= set CORS cho FrontEnd và BackEnd
 
 Protocol Host :Port
 https:// google.com:3000
 
 `npm i cors` : tại server/server.js
 
-# cách automatic running client and server at the same time (manage both client/server)
+# 2. cách automatic running client and server at the same time (manage both client/server)
 
 - tạo package.json ngoài root ngaoic cùng
 - viết script đề `run client and server at the same time`
@@ -35,7 +35,7 @@ https:// google.com:3000
 # "watch": "concurrently \"npm run server\" \"npm run client\"",
 ```
 
-# how to run project in Production
+# 3. how to run project in Production
 
 > > run frontend và BAckend trên cùng 1 url
 
@@ -76,12 +76,12 @@ app.get("/{*splat}", (req, res) => {
 
 5. từ bay giờ: url cảu UI `http://localhost:8000/`
 
-# Install MiddleWare morgan for server
+# 4. Install MiddleWare morgan for server
 
 1. tại server
    `npm i morgan`
 
-# Flow data (E.g: planets)
+# 5. Flow data (E.g: planets)
 
 `server.js --> app.js --> planets.router --> planets.controller --> planets.model`
 
@@ -105,4 +105,63 @@ app.use(planetsRouter)
 
 ```
 
-// 27 DELETE
+# 6. Testing In Node -
+
+`npm test` : cho testing toàn app
+tại cd server, `npm run test-watch` : test only atserver
+
+https://jestjs.io/docs/using-matchers
+https://jestjs.io/docs/expect
+
+> > > > > > > > API Test with Jest
+
+- work both on FrontEnd and BackEnd
+
+1. chuyền đến server folder : cd server
+
+- `npm i jest --save-dev` : only using jest when develpment
+
+2. tại package.json
+
+```bash
+  "scripts": {
+    "test": "jest",
+      .....
+   }
+```
+
+`E.g: làm testing với launches`
+
+3. tạo launches/`launches.test.js`
+
+- phài test tất cả các trường hợp có thể xày ra trong hàm
+
+```bash
+- xem test với GET HTTP
+-------------- POST HTTP
+
+```
+
+4. install supertest
+   npm i supertest --save-dev
+
+```bash
+.toBe() : 2 value giống nhau
+.toMatchObject() : Prperties của Object nhận về chỉ cần giống nhau với properties cùa Object gời đi ( ko cần đủ số lượng)
+.toStrictEqual() :  2 Objects phài completely the same ( số lương, type....)
+```
+
+> > > > > > > > API Test with Test Runner
+
+1. dùng các hàm test do NOde cung cấp, ko dùng Jest
+
+- xem file launches/`launches.test.runner.js`
+
+2. tại package.json
+
+```bash
+  "scripts": {
+    "test": "node --test",
+    "test-watch": "node --test --watch",
+    }
+```
