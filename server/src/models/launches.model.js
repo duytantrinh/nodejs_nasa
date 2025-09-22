@@ -1,4 +1,7 @@
-const launches = new Map()
+const launches = require("./launches.mongo")
+const planets = require("./planets.mongo")
+
+// const launches = new Map()
 
 let latestFlightNumber = 100
 
@@ -6,19 +9,50 @@ const launch = {
   flightNumber: 100,
   mission: "kepler Exploration X",
   rocket: "Explorer IS1",
-  launchDate: new Date("December 18, 2029"),
+  launchDate: new Date("December 18, 2111"),
   target: "Kepler-442 b",
-  customer: ["NASA", "TANTRINH"],
+  customers: ["NASA", "TANTRINH"],
   upcoming: true, // opposition == history
   success: true, // check status
 }
 
-launches.set(launch.flightNumber, launch)
+// 1. create the first launch
+saveLaunch(launch)
 
 // GET http
-function getAllLaunches() {
+async function getAllLaunches() {
   // convert Map launches to Array
-  return Array.from(launches.values())
+  return await launches.find(
+    {},
+    // exclude : Donot show 2 columns "_id", "__v"
+    {
+      "_id": 0,
+      "__v": 0,
+    }
+  )
+}
+
+async function saveLaunch(launch) {
+  const planet = await planets.findOne({
+    keplerName: launch.target,
+  })
+
+  // make sure new target is matching target in planet collection
+  if (!planet) {
+    throw new Error("No matching planet Found!")
+  }
+
+  await launches.updateOne(
+    {
+      // check exist ? => NO exist => create NEw
+      flightNumber: launch.flightNumber,
+    },
+    // Yes Exist ? update in launch
+    launch,
+    {
+      upsert: true, // Upsert action
+    }
+  )
 }
 
 // POST http
@@ -29,7 +63,7 @@ function addNewLaunch(launch) {
     Object.assign(launch, {
       // (add new fields for launch Object)
       flightNumber: latestFlightNumber,
-      customer: ["NASA", "TanTrinh"],
+      customers: ["NASA", "TanTrinh"],
       upcoming: true, // opposition == history
       success: true, // check status
     })

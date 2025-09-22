@@ -126,6 +126,7 @@ https://jestjs.io/docs/expect
 ```bash
   "scripts": {
     "test": "jest",
+     "test-watch": "jest --watch",
       .....
    }
 ```
@@ -134,7 +135,7 @@ https://jestjs.io/docs/expect
 
 3. tạo launches/`launches.test.js`
 
-- phài test tất cả các trường hợp có thể xày ra trong hàm
+- phài test tất cả các trường hợp có thể xày ra trong function GET/POST
 
 ```bash
 - xem test với GET HTTP
@@ -165,3 +166,102 @@ https://jestjs.io/docs/expect
     "test-watch": "node --test --watch",
     }
 ```
+
+# improve NODE Performance
+
+- divide the big request to multiple small ones by node processes running parallel (side by side)
+
+> > ------- 1. dùng Cluster Module
+> > xem Performance_Example/server_without_pm2.js
+
+- tạo các node processes nhỏ (gọi là worker) để chia nhỏ đảm nhận các request
+- khi run luôn chạy 1 master cho `server.js` và các worker tương ứng với các http request
+
+```bash
+# // gọi cluster de tạo chia nhỏ các worker
+const cluster = require("cluster")
+# // window: PHẢI thêm dòng này cluster mới chạy đc nhiều worker
+cluster.schedulingPolicy = cluster.SCHED_RR
+
+if (cluster.isMaster) {
+#   // (1. master là server.js)
+  console.log("Master")
+
+  const NUM_WORKERS = os.cpus().length
+
+  for (let i = 0; i < NUM_WORKERS; i++) {
+    # // (tạo maximum worker (node processes) based on physical of each MACHINE (this machine: 12))
+    cluster.fork()
+  }
+
+} else {
+#   // (2. 2 worker tương ứng 2 request / và /timer sẽ đc chạy trên 2 node processes parallel)
+  console.log("worker")
+  app.listen(3000)
+}
+
+```
+
+> > --- 2. dùng PM2 (a tool manages cluster module)
+> > dùng pm2 sẽ làm cho code ngắn gọn hơn . xem Performance_Example/server.js
+
+`npm i pm2 -g` : install global module
+
+++ run pm2 :
+`pm2 start server.js` : start file server.js ( 1 master và 12 workers (vì máy này chạy đc tối đa 12 workers))
+`pm2 status` : xem status của node server (file server.js)
+`pm2 stop server` : stop node server
+`pm2 delete server` : delete all running cluster of node server
+`pm2 start server.js -i 2` : run 2 worker
+`pm2 start server.js -i max` : run max worker
+`pm2 list` : list of master and worker
+`pm2 logs` : all console.log of master and workers
+`pm2 show 0` : check alll information của cluster id 0
+
+# === Databases
+
+username: node_nasa
+pass: jn1ruzQo9rcp4S9Q
+
+mongodb+srv://node_nasa:<db_password>@cluster0.a1ba9vm.mongodb.net/<ten_db_tudat>?retryWrites=true&w=majority&appName=Cluster0
+
+`npm i mongoose `
+
+1. CONNECT database
+
+```bash
+const mongoose = require("mongoose")
+
+const MONGO_URL =
+  "mongodb+srv://node_nasa:jn1ruzQo9rcp4S9Q@cluster0.a1ba9vm.mongodb.net/nasa_api?retryWrites=true&w=majority&appName=Cluster0"
+
+mongoose.connection.once("open", () => {
+  console.log("MongoDB connection ready!!!")
+})
+
+
+mongoose.connection.on("error", (err) => {
+  console.error(err)
+})
+
+ await mongoose.connect(MONGO_URL, {
+   #  // most of time need 4 parameters
+    useNewUrlParser: true, // using string
+    useFindAndModify: false, // donot allow auto apdate
+    useCreateIndex: true,
+    useUnifiedTopology: true, // talking to cluster
+  })
+
+```
+
+# ===== Mongoose
+
+https://mongoosejs.com/docs/schematypes.html
+E.g: for Launches
+
+1. tạo models/launches.mongo.js
+
+- `ObjectId` : === "\_id" trong database
+- `__v` : keep track version
+
+// 27 . Auto Incre

@@ -7,8 +7,8 @@ const {
 
 // console.log(launches.values())
 
-function httpGetAllLaunches(req, res) {
-  return res.status(200).json(getAllLaunches())
+async function httpGetAllLaunches(req, res) {
+  return res.status(200).json(await getAllLaunches())
 }
 function httpPostNewLaunch(req, res) {
   // taking body data
