@@ -83,7 +83,9 @@ app.get("/{*splat}", (req, res) => {
 
 # 5. Flow data (E.g: planets)
 
-`server.js --> app.js --> planets.router --> planets.controller --> planets.model`
+`server.js --> app.js --> planets.router --> planets.controller --> planets.model -> planets.mongo`
+
+0. planets.mongo: tạo schema cho database model
 
 1. planets.model: tạo/kết nối với database planets
 
@@ -165,6 +167,34 @@ https://jestjs.io/docs/expect
     "test": "node --test",
     "test-watch": "node --test --watch",
     }
+```
+
+# ======= Testing Mongoose + Node with Jest
+
+1. tại file `package.json của folder server`, thêm
+
+```bash
+  "jest": {
+    "testEnviroment": "node,"
+  },
+```
+
+2. tạo server/src/`services`/mongo.js
+
+- nơi connect Node với Mongoose DB (tạo hàm mongoConnect())
+
+3. gọi hàm mongoConnect() tại `server.js`
+
+4. tại `launches.test.js`, gọi mongoConnect() trước hết và disConnect() sau cùng khi all test finished
+
+```bash
+  beforeAll(async () => {
+    await mongoConnect()
+  })
+
+  afterAll(async () => {
+    await mongoDisConnect()
+  })
 ```
 
 # improve NODE Performance
@@ -264,4 +294,23 @@ E.g: for Launches
 - `ObjectId` : === "\_id" trong database
 - `__v` : keep track version
 
-// 27 . Auto Incre
+# .Auto Incre +1 cho id của next launch
+
+1. get latest id(flightNumber)
+   tại launches.model.js viết hàm
+
+```bash
+const DEFAULT_FLIGHT_NUMBER = 100
+
+async function getLatestFlightNumber() {
+  # // get one launch => sort desc by flightNumber => get launch with biggest flightNumber
+  const latestLaunch = await launches.findOne().sort({"flightNumber": "-1"})
+
+  // for first launch
+  if (!latestLaunch) {
+    return DEFAULT_FLIGHT_NUMBER
+  }
+
+  return latestLaunch.flightNumber
+}
+```
