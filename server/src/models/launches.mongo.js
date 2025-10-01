@@ -22,7 +22,7 @@ const launchesSchema = new mongoose.Schema({
   },
   target: {
     type: String,
-    required: true,
+    // required: true,
   },
   // (relationship with Planet Schema)
   //   target: {

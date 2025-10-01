@@ -314,3 +314,83 @@ async function getLatestFlightNumber() {
   return latestLaunch.flightNumber
 }
 ```
+
+# ===== Tạo Versioning Node API (version 1, version 2 ...)
+
+E.g: Tạo v1 cho api
+
+1. tạo routes/api.js
+
+- tạo các router chính tại file này
+
+```bash
+# // middelware to use router /planets
+api.use("/planets", planetsRouter)
+api.use("/launches", launchesRouter)
+
+```
+
+2. tại src/app.js
+   gọi api ở trên kèm theo /v1, /v2 .... tùy ý muốn
+
+```bash
+# // create v1 for api router /v1/planets , /v1/launches
+app.use("/v1", api)
+# // app.use("/v2", api)
+
+```
+
+# Fetching Data from spaceX API
+
+https://github.com/r-spacex/SpaceX-API/blob/master/docs/README.md
+
+1. dùng axios đề post request to spaceX API
+   `npm i axios`
+
+tại launches.model.js viết hàm `loadLaunchesData()` để lấy all launches từ API
+
+> 2. Pagination Data getting from API (tại server)
+>    E.g: làm pagiantion cho launches
+
+1. tạo file services/query.js
+   -> đề lấy limit và page trên url
+   // http://localhost:4000/v1/launches?limit=50&page=1
+   --> return về `skip và limit` đề bỏ vào query của schema cho pagination (mặc định bới MongooseDB)
+
+2. tại launches.controller
+
+- tại hàm getALLLaunches
+
+```bash
+async function httpGetAllLaunches(req, res) {
+  # // http://localhost:4000/v1/launches?limit=50&page=1
+  const {skip, limit} = getPagination(req.query)
+  # pass skip và limit đến getAllLaunches trong launches.model như parameter
+  return res.status(200).json(await getAllLaunches(skip, limit))
+}
+
+```
+
+3. tại launches.model
+   thêm
+
+```bash
+async function getAllLaunches(skip, limit) {
+  // convert Map launches to Array
+  return await launches
+    .find(
+      {},
+      {
+        "_id": 0,
+        "__v": 0,
+      }
+    )
+    # sort by flightNumber before pagination
+    .sort({flightNumber: 1})
+    # // for pagination
+    .skip(skip)
+    .limit(limit)
+}
+```
+
+14. sorting paginated Data

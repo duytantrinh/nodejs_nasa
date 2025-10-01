@@ -15,7 +15,7 @@ describe("Launches API", () => {
     test("It should respond with 200 success", async () => {
       // using jest + supertest
       const response = await request(app)
-        .get("/launches")
+        .get("/v1/launches")
         .expect("Content-Type", /json/)
         .expect(200)
       // expect(response.statusCode).toBe(200)
@@ -47,7 +47,7 @@ describe("Launches API", () => {
     test("It should respond with 201 created", async () => {
       // using jest + supertest
       const response = await request(app)
-        .post("/launches")
+        .post("/v1/launches")
         .send(completeLaunchData)
         .expect("Content-Type", /json/)
         .expect(201)
@@ -65,7 +65,7 @@ describe("Launches API", () => {
 
     test("It should catch missing required properties", async () => {
       const response = await request(app)
-        .post("/launches")
+        .post("/v1/launches")
         // send data wihout Date (Missing Date)
         .send(launchDataWithOutDate)
         .expect("Content-Type", /json/)
@@ -81,7 +81,7 @@ describe("Launches API", () => {
 
     test("It should catch invalid Launch Date", async () => {
       const response = await request(app)
-        .post("/launches")
+        .post("/v1/launches")
         // send data with INVALID Date
         .send(launchDataWithInvalidDate)
         .expect("Content-Type", /json/)

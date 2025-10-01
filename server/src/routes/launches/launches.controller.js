@@ -7,8 +7,13 @@ const {
 
 // console.log(launches.values())
 
+const {getPagination} = require("../../services/query")
+
 async function httpGetAllLaunches(req, res) {
-  return res.status(200).json(await getAllLaunches())
+  // http://localhost:4000/v1/launches?limit=50&page=1
+  const {skip, limit} = getPagination(req.query)
+  const launches = await getAllLaunches(skip, limit)
+  return res.status(200).json(launches)
 }
 
 async function httpPostNewLaunch(req, res) {

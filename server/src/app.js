@@ -3,8 +3,7 @@ const express = require("express")
 const cors = require("cors")
 const morgan = require("morgan")
 
-const planetsRouter = require("./routes/planets/planets.router")
-const launchesRouter = require("./routes/launches/launches.router")
+const api = require("./routes/api")
 
 const app = express()
 
@@ -42,9 +41,9 @@ app.use(express.json())
 // middle ware to run static files at public folder
 app.use(express.static(path.join(__dirname, "..", "public")))
 
-// middlware to use router /planets
-app.use("/planets", planetsRouter)
-app.use("/launches", launchesRouter)
+// create v1 for api router /v1/planets , /v1/launches
+app.use("/v1", api)
+// app.use("/v2", api)
 
 // middleware to run http://localhost:8000/{*splat} === every endpoint after 8000/
 app.get("/{*splat}", (req, res) => {
