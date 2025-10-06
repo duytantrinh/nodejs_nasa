@@ -32,7 +32,7 @@ app.use(
   })
 )
 
-// morgan Middleware: check đc tất cả các request đã thuc hiện tại UI
+// morgan Middleware: check all requests at UI
 app.use(morgan("combined"))
 
 // using middleware Router
@@ -46,6 +46,7 @@ app.use("/v1", api)
 // app.use("/v2", api)
 
 // middleware to run http://localhost:8000/{*splat} === every endpoint after 8000/
+// check MiddleWare checkLoggedIn before continue
 app.get("/{*splat}", (req, res) => {
   res.sendFile(path.join(__dirname, "..", "public", "index.html"))
 })
