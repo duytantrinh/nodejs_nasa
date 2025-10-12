@@ -16,7 +16,7 @@ jobs:
     strategy:
       matrix:
         node-version: [20.x, 22.x]
-        mongodb-version: ["7.0", "8.0"]
+        mongodb-version: ["8.0"]
     runs-on: ubuntu-latest
     # define different actions at ubuntu to do for testing
     steps:

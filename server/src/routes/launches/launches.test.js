@@ -2,10 +2,13 @@ const request = require("supertest")
 const app = require("../../app")
 
 const {mongoConnect, mongoDisConnect} = require("../../services/mongo")
+const {loadPlanetsData} = require("../../models/planets.model")
 
 describe("Launches API", () => {
   beforeAll(async () => {
+    // need to connect to MongoDb,loadPlanetData cause this file doesn't call server.js
     await mongoConnect()
+    await loadPlanetsData()
   })
   afterAll(async () => {
     await mongoDisConnect()
