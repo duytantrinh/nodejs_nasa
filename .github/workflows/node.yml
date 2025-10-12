@@ -12,9 +12,11 @@ jobs:
     # lists of enviroment this job can run
     env:
       CI: true
+      MONGO_URL: mongodb://localhost/node_nasa
     strategy:
       matrix:
         node-version: [20.x, 22.x]
+        mongodb-version: ["7.0", "8.0"]
     runs-on: ubuntu-latest
     # define different actions at ubuntu to do for testing
     steps:
@@ -23,6 +25,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
+      # to connect MongoDB on workflow
+      - name: Use MongoDB from GitHub actions
+        uses: supercharge/mongodb-github-action@1.12.0
+        with:
+          mongodb-version: ${{ matrix.mongodb-version }}
       - run: npm install
         # run build on client code
       - run: npm run build --prefix client
