@@ -1,0 +1,22 @@
+name: NASA TT CI
+# define triggers to do workflow
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+# each project need jobs to test
+jobs:
+  # testing when building
+  build:
+    runs-on: ubuntu-latest
+    # define different actions at ubuntu to do for testing
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js version 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: npm install
+        # run build on client code
+      - run: npm run build --prefix client
